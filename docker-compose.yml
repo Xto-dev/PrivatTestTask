@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # ===== PRIMARY =====
+  primary:
+    image: postgres:16
+    container_name: primary
+    environment:
+      POSTGRES_PASSWORD: postgres
+    command: >
+      postgres
+      -c wal_level=logical
+      -c max_replication_slots=4
+      -c max_wal_senders=4
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      - primary_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ===== REPLICA =====
+  replica:
+    image: postgres:16
+    container_name: replica
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db-init-replica:/docker-entrypoint-initdb.d
+      - replica_data:/var/lib/postgresql/data
+    depends_on:
+      primary:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  # === REPLICATION INITIALIZER ===
+  init-replication:
+    image: postgres:16
+    depends_on:
+      replica:
+        condition: service_healthy
+    volumes:
+      - ./replication-setup/create-subscription.sql:/create-subscription.sql:ro
+    command: |
+      bash -c "
+        echo 'Creating publication on primary...' &&
+        psql -h primary -U postgres -c 'CREATE PUBLICATION t1_replication_pub FOR TABLE t1;' &&
+        echo 'Creating subscription on replica...' &&
+        psql -h replica -U postgres -f /create-subscription.sql &&
+        echo 'Replication setup complete!'
+      "
+    environment:
+      PGPASSWORD: postgres
+  
+  # ===== .NET WORKER =====
+  worker:
+    build: ./PrivatWorker
+    depends_on:
+      init-replication:
+        condition: service_completed_successfully
+    environment:
+      - ConnectionStrings__Db=Host=primary;Port=5432;Username=postgres;Password=postgres;Database=postgres
+
+volumes:
+  primary_data:
+  replica_data:

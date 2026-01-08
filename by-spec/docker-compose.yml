@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # ===== PRIMARY =====
+  primary:
+    image: cleisonfmelo/postgres-pg-cron
+    container_name: primary-2
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    command: >
+      postgres
+      -c listen_addresses='*'
+      -c wal_level=replica
+      -c max_wal_senders=5
+      -c wal_keep_size=64
+      -c archive_mode=off
+      -c hba_file='/etc/postgresql/pg_hba.conf'
+      -c shared_preload_libraries='pg_cron'
+      -c cron.database_name='postgres'
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/db-init:/docker-entrypoint-initdb.d
+      - ./db/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      - ./db/.pgpass:/var/lib/postgresql/.pgpass:ro
+      - primary_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ===== REPLICA =====
+  replica:
+    image: cleisonfmelo/postgres-pg-cron
+    container_name: replica-2
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - replica_data:/var/lib/postgresql/data
+    depends_on:
+      - primary
+    command: >
+      bash -c "
+        if [ ! -f /var/lib/postgresql/data/standby.signal ]; then
+          echo 'Initializing replica from primary...';
+          until pg_isready -h primary -U repl_user -d postgres; do
+            echo 'Waiting for primary...';
+            sleep 2;
+          done;
+          rm -rf /var/lib/postgresql/data/*;
+          PGPASSWORD=postgres pg_basebackup -h primary -D /var/lib/postgresql/data -U repl_user -P --wal-method=stream;
+          chmod 700 /var/lib/postgresql/data
+          chown -R postgres:postgres /var/lib/postgresql/data;
+          touch /var/lib/postgresql/data/standby.signal;
+        fi;
+        exec postgres -c primary_conninfo='host=primary port=5432 user=repl_user password=postgres' -c primary_slot_name='replica_slot' -c hot_standby=on
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U repl_user -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+volumes:
+  primary_data:
+  replica_data:

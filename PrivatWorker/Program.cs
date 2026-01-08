@@ -22,8 +22,5 @@ builder.Services.AddScoped<ITransactionLogger, TransactionLogger>();
 builder.Services.AddSingleton<ErrorLogger>();
 builder.Services.AddSingleton<ILogWriter, ConsoleLogWriter>();
 
-Console.WriteLine(
-    $"CS = [{builder.Configuration.GetConnectionString("PostgreSql")}]");
-
 var host = builder.Build();
 host.Run();

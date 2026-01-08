@@ -1,7 +1,4 @@
 ﻿using PrivatWorker.Model.Transactions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PrivatWorker.Application.Transactions
 {

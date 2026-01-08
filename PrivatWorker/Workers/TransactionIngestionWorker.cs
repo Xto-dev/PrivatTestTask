@@ -4,8 +4,8 @@ using PrivatWorker.Model.Transactions;
 
 namespace PrivatWorker.Workers
 {
-    
-    public class TransactionIngestionWorker: BackgroundService
+
+    public class TransactionIngestionWorker : BackgroundService
     {
         private readonly CreateTransaction _createTransaction;
         private readonly ErrorLogger _errorLogger;

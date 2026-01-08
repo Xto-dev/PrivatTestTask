@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PrivatWorker.Model.Transactions
+﻿namespace PrivatWorker.Model.Transactions
 {
     public class TransactionMessage
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PrivatWorker.Application.Transactions
+﻿namespace PrivatWorker.Application.Transactions
 {
     public interface ITransactionLogger
     {

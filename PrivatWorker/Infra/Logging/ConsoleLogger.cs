@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PrivatWorker.Infra.Logging
+﻿namespace PrivatWorker.Infra.Logging
 {
     public class ConsoleLogWriter : ILogWriter
     {

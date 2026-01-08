@@ -1,8 +1,5 @@
 ﻿using PrivatWorker.Application.Transactions;
 using PrivatWorker.Infra.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PrivatWorker.Workers
 {

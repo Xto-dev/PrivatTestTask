@@ -15,7 +15,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./db/db-init:/docker-entrypoint-initdb.d
       - primary_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -32,7 +32,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./db-init-replica:/docker-entrypoint-initdb.d
+      - ./db/db-init-replica:/docker-entrypoint-initdb.d
       - replica_data:/var/lib/postgresql/data
     depends_on:
       primary:
@@ -50,7 +50,7 @@ services:
       replica:
         condition: service_healthy
     volumes:
-      - ./replication-setup/create-subscription.sql:/create-subscription.sql:ro
+      - ./db/replication-setup/create-subscription.sql:/create-subscription.sql:ro
     command: |
       bash -c "
         echo 'Creating publication on primary...' &&
@@ -69,7 +69,7 @@ services:
       init-replication:
         condition: service_completed_successfully
     environment:
-      - ConnectionStrings__Db=Host=primary;Port=5432;Username=postgres;Password=postgres;Database=postgres
+      - ConnectionStrings__PostgreSql=Host=primary;Port=5432;Username=postgres;Password=postgres;Database=postgres
 
 volumes:
   primary_data:

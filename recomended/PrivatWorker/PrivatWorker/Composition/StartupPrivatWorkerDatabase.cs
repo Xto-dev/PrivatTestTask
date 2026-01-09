@@ -15,8 +15,6 @@ public static class StartupPrivatWorkerDatabase
         var connectionString = configuration.GetConnectionString("Default");
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
-        services.AddScoped<IDbConnectionFactory>(_ => new PostgresConnectionFactory(connectionString));
-        services.AddScoped<IPostgresConnection>(_ => new PostgresConnectionWrapper(connectionString));
-        services.AddTransient<ITransactionRepository, TransactionRepository>();
+        services.AddTransient<ITransactionRepository>(_ => new TransactionRepository(connectionString));
     }
 }

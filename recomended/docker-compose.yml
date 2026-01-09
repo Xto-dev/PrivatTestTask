@@ -64,7 +64,7 @@ services:
   
   # ===== .NET WORKER =====
   worker:
-    build: ./PrivatWorker
+    build: ./PrivatWorker/PrivatWorker
     depends_on:
       init-replication:
         condition: service_completed_successfully

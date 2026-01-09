@@ -1,8 +1,8 @@
-﻿namespace PrivatWorker.Model.Transactions
+﻿namespace PrivatWorker.Entities
 {
     public class Transaction
     {
-        public Guid TransactionId { get; set; }
+        public Guid Id { get; set; }
         public DateOnly Date { get; set; }
         public decimal Amount { get; set; }
         public int Status { get; set; }

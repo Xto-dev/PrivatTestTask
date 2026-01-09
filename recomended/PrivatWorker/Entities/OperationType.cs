@@ -1,4 +1,4 @@
-﻿namespace PrivatWorker.Model.Transactions
+﻿namespace PrivatWorker.Entities
 {
     public class OperationType
     {

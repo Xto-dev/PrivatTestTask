@@ -1,7 +1,9 @@
 # Transaction Processing System — Test Task (PrivatBank)
 
 This project implements a transaction processing system with partitioning, background processing, incremental aggregation, and logical replication.  
-The solution is designed to be close to real production scenarios.
+There are two solution variants:
+- by-spec — follows the task strictly, respecting the constraints and library limitations (e.g., pg_cron cannot execute sub-minute tasks, so 3–5 second jobs are scheduled every 1 minute).
+- recommended — optimized and more maintainable implementation, closer to production best practices.
 
 ---
 

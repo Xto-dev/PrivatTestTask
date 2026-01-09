@@ -7,7 +7,7 @@ using System.Text.Json;
 namespace PrivatWorker.Infrastructure
 {
     public class TransactionRepository(
-        string connectionString
+        IDbConnectionFactory connectionFactory
     ) : ITransactionRepository
     {
         public async Task AddTransactionAsync(Transaction transaction, CancellationToken cancellationToken)
@@ -15,7 +15,7 @@ namespace PrivatWorker.Infrastructure
             ArgumentNullException.ThrowIfNull(transaction);
             ArgumentNullException.ThrowIfNull(transaction.Message);
 
-            using var conn = new NpgsqlConnection(connectionString);
+            using var conn = connectionFactory.CreateConnection();
             await conn.OpenAsync(cancellationToken);
 
             await using var cmd = conn.CreateCommand();
@@ -41,9 +41,10 @@ namespace PrivatWorker.Infrastructure
                 operation_type = message.OperationType.ToString()
             });
         }
+
         public async Task<int> ChangeTransactionsStatusByParityAsync(bool parity, CancellationToken cancellationToken)
         {
-            await using var conn = new NpgsqlConnection(connectionString);
+            await using var conn = connectionFactory.CreateConnection();
             await conn.OpenAsync(cancellationToken);
             var parityValue = parity ? 1 : 0;
             await using var cmd = conn.CreateCommand();

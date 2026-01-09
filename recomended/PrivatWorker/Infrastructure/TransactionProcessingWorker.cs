@@ -24,7 +24,8 @@ namespace PrivatWorker.Infrastructure
                 log.ExecuteAsyncException(exception);
             }
         }
-        async Task UpdateTransactionStatus(CancellationToken stoppingToken)
+
+        public async Task UpdateTransactionStatus(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
             var now = DateTime.Now;

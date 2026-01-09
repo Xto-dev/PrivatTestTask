@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="../PrivatWorkerTests/PrivatWorkerTests.csproj" Id="77494d9e-5611-4ce0-8f92-0eefcaac1401" />
   <Project Path="PrivatWorker.csproj" />
 </Solution>

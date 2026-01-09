@@ -2,7 +2,6 @@
 
 namespace PrivatWorker.Infrastructure
 {
-
     public class TransactionIngestionWorker(
         ITransactionLog log,
         ITransactionRepository repository
@@ -25,7 +24,7 @@ namespace PrivatWorker.Infrastructure
                 log.ExecuteAsyncException(exception);
             }
         }
-        async Task CreateTransaction(CancellationToken stoppingToken)
+        public async Task CreateTransaction(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
             var transaction = GenerateTransaction();

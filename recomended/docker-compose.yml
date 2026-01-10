@@ -50,11 +50,12 @@ services:
       replica:
         condition: service_healthy
     volumes:
+      - ./db/replication-setup/create-publication.sql:/create-publication.sql:ro
       - ./db/replication-setup/create-subscription.sql:/create-subscription.sql:ro
     command: |
       bash -c "
         echo 'Creating publication on primary...' &&
-        psql -h primary -U postgres -c 'CREATE PUBLICATION t1_replication_pub FOR TABLE t1;' &&
+        psql -h primary -U postgres -f /create-publication.sql &&
         echo 'Creating subscription on replica...' &&
         psql -h replica -U postgres -f /create-subscription.sql &&
         echo 'Replication setup complete!'

@@ -49,7 +49,7 @@ public class TransactionRepository(
         {
             account_number = message.AccountNumber,
             client_id = message.ClientId,
-            operation_type = message.OperationType.ToString()
+            operation_type = message.OperationType.ToString("G")
         });
     }
 }

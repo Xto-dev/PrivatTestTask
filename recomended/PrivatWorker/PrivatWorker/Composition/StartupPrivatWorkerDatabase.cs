@@ -1,5 +1,5 @@
-﻿using PrivatWorker.Entities;
-using PrivatWorker.Infrastructure;
+﻿using PrivatWorker.Infrastructure;
+using PrivatWorker.UseCases;
 
 #pragma warning disable IDE0130
 namespace Microsoft.Extensions.DependencyInjection;

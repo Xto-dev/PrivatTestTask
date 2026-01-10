@@ -1,10 +1,10 @@
-﻿using PrivatWorker.Entities;
+﻿using PrivatWorker.UseCases;
 
 namespace PrivatWorker.Infrastructure;
 
 public class TransactionProcessingWorker(
-    ITransactionLog log,
-    ITransactionRepository repository
+    IWorkerLog log,
+    UpdateTransactionStatusCommand command
 ) : BackgroundService
 {
     private const int TimerIntervalInSeconds = 3;
@@ -17,21 +17,12 @@ public class TransactionProcessingWorker(
             while (true)
             {
                 await timer.WaitForNextTickAsync(stoppingToken);
-                await UpdateTransactionStatus(stoppingToken);
+                await command.ExecuteAsync(stoppingToken);
             }
         }
         catch (Exception exception)
         {
             log.ExecuteAsyncException(exception);
         }
-    }
-
-    public async Task UpdateTransactionStatus(CancellationToken stoppingToken)
-    {
-        stoppingToken.ThrowIfCancellationRequested();
-        var now = DateTime.Now;
-        var isParity = now.Second % 2 == 0;
-        var rows = await repository.ChangeTransactionsStatusByParityAsync(isParity, stoppingToken);
-        log.TransactionsStatusChanged(isParity, rows);
     }
 }

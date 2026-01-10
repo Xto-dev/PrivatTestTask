@@ -1,4 +1,5 @@
 ﻿using PrivatWorker.Entities;
+using PrivatWorker.UseCases;
 
 namespace PrivatWorker.Infrastructure;
 

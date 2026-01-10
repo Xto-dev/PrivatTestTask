@@ -1,4 +1,6 @@
-﻿namespace PrivatWorker.Entities;
+﻿using PrivatWorker.Entities;
+
+namespace PrivatWorker.UseCases;
 
 public interface ITransactionLog
 {

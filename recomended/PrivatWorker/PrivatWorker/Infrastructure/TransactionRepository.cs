@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
 using PrivatWorker.Entities;
+using PrivatWorker.UseCases;
 using System.Data;
 using System.Text.Json;
 
@@ -10,7 +11,7 @@ public class TransactionRepository(
     string connectionString
 ) : ITransactionRepository
 {
-    public async Task AddTransactionAsync(Transaction transaction, CancellationToken cancellationToken)
+    public async Task AddTransactionAsync(Transaction transaction, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(transaction);
         ArgumentNullException.ThrowIfNull(transaction.Message);
@@ -32,17 +33,7 @@ public class TransactionRepository(
         await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    private static string MapMessageToJson(TransactionMessage message)
-    {
-        return JsonSerializer.Serialize(new
-        {
-            account_number = message.AccountNumber,
-            client_id = message.ClientId,
-            operation_type = message.OperationType.ToString()
-        });
-    }
-
-    public async Task<int> ChangeTransactionsStatusByParityAsync(bool parity, CancellationToken cancellationToken)
+    public async Task<int> ChangeTransactionsStatusByParityAsync(bool parity, CancellationToken cancellationToken = default)
     {
         await using var conn = new NpgsqlConnection(connectionString);
         await conn.OpenAsync(cancellationToken);
@@ -51,5 +42,14 @@ public class TransactionRepository(
         cmd.CommandText = $"UPDATE t1 SET status = 1 WHERE status = 0 AND id % 2 = {parityValue}";
         cmd.CommandType = CommandType.Text;
         return await cmd.ExecuteNonQueryAsync(cancellationToken);
+    }
+    private static string MapMessageToJson(TransactionMessage message)
+    {
+        return JsonSerializer.Serialize(new
+        {
+            account_number = message.AccountNumber,
+            client_id = message.ClientId,
+            operation_type = message.OperationType.ToString()
+        });
     }
 }

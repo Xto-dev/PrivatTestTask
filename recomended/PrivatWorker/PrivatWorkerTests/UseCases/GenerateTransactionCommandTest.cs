@@ -97,7 +97,7 @@ public class GenerateTransactionCommandTest
     }
 
     [Fact]
-    public async Task ExecuteAsync_ShouldPassTransactionWithClientId()
+    public async Task ExecuteAsync_ShouldPassTransactionWithMessageClientId()
     {
         var actualClientId = 0;
         _repository
@@ -115,7 +115,7 @@ public class GenerateTransactionCommandTest
     }
 
     [Fact]
-    public async Task ExecuteAsync_ShouldPassTransactionWithAccountNumber()
+    public async Task ExecuteAsync_ShouldPassTransactionWithMessageAccountNumber()
     {
         var actualAccountNumber = string.Empty;
         _repository
@@ -134,7 +134,7 @@ public class GenerateTransactionCommandTest
     }
 
     [Fact]
-    public async Task ExecuteAsync_ShouldPassTransactionWithOperationTypeOffline()
+    public async Task ExecuteAsync_ShouldPassTransactionWithMessageOperationTypeOffline()
     {
         var actualOperationType = OperationType.online;
         _repository
@@ -151,7 +151,7 @@ public class GenerateTransactionCommandTest
     }
 
     [Fact]
-    public async Task ExecuteAsync_ShouldPassTransactionWithOperationTypeOnline()
+    public async Task ExecuteAsync_ShouldPassTransactionWithMessageOperationTypeOnline()
     {
         var actualOperationType = OperationType.online;
         _repository
